@@ -12,6 +12,7 @@ import {
   ErrorPage,
   AuthPage,
 } from "@/pages";
+import { ThemeProvider } from "@/lib/theme-provider";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -35,8 +36,10 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

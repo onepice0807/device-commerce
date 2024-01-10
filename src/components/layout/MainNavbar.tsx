@@ -22,6 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "../ui/theme-toggle";
 
 const navigation = {
   categories: [
@@ -223,8 +224,8 @@ export default function MainNavbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-white">
-      <header className="relative bg-white">
+    <div className="bg-white dark:bg-black">
+      <header className="relative dark:bg-gray-700">
         <nav
           aria-label="Top"
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
@@ -543,6 +544,7 @@ export default function MainNavbar() {
                   <MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
                 </a>
 
+                <ThemeToggle />
                 {/* Account */}
                 <a
                   href="#"

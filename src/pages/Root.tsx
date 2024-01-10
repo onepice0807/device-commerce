@@ -1,7 +1,11 @@
-import React from "react";
+import MainNavbar from "@/components/layout/MainNavbar";
 
 const Root = () => {
-  return <div>Root</div>;
+  return (
+    <div>
+      <MainNavbar />
+    </div>
+  );
 };
 
 export default Root;

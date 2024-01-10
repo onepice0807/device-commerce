@@ -1,10 +1,14 @@
 import MainNavbar from "@/components/layout/MainNavbar";
+import { Outlet } from "react-router-dom";
 
 const Root = () => {
   return (
-    <div>
+    <>
       <MainNavbar />
-    </div>
+      <div className="h-full w-full">
+        <Outlet />
+      </div>
+    </>
   );
 };
 

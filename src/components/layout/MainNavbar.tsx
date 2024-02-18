@@ -17,7 +17,9 @@ const MainNavbar = () => {
       </div>
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        <User2 className="h-8 w-8" />
+        <Link to="/auth">
+          <User2 className="h-8 w-8" />
+        </Link>
       </div>
     </nav>
   );

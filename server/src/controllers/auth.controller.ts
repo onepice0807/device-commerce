@@ -1,4 +1,5 @@
-import { hashPassword } from "@/shared/auth.utile";
+import { config } from "@/config";
+import { comparePassword, createJWT, hashPassword } from "@/shared/auth.utile";
 import { db } from "@/shared/db";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -10,6 +11,7 @@ export const signup = async (req: Request, res: Response) => {
       meesage: "이메일과 비밀번호는 필수 입력값입니다.",
       data: null,
     });
+    return;
   }
 
   const existingUser = await db.user.findUnique({
@@ -22,6 +24,7 @@ export const signup = async (req: Request, res: Response) => {
       message: "이미 가입된 이메일입니다.",
       data: null,
     });
+    return;
   }
 
   const hashedPassword = await hashPassword(password);
@@ -39,4 +42,60 @@ export const signup = async (req: Request, res: Response) => {
       user,
     },
   });
+};
+
+export const signin = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      meesage: "이메일과 비밀번호는 필수 입력값입니다.",
+      data: null,
+    });
+    return;
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (!user) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: "해당 이메일로 가입된 정보를 찾을 수 없습니다.",
+      data: null,
+    });
+    return;
+  }
+
+  const isMatch = await comparePassword(password, user.password);
+  if (!isMatch) {
+    res.status(StatusCodes.UNAUTHORIZED).json({
+      message: "비밀번호가 일치하지 않습니다.",
+      data: null,
+    });
+    return;
+  }
+
+  const token = createJWT({ id: user.id, email: user.email });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    secure: config.NODE_ENV === "production",
+  });
+
+  res.status(StatusCodes.OK).json({
+    message: "로그인에 성공하였습니다.",
+    data: null,
+  });
+};
+
+export const signout = async (_req: Request, res: Response) => {
+  res.cookie("token", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "유저가 로그아웃 되었습니다.", data: null });
 };

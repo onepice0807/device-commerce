@@ -1,5 +1,9 @@
 import { config } from "@/config";
-import { comparePassword, createJWT, hashPassword } from "@/shared/auth.utile";
+import {
+  comparePassword,
+  generateTokens,
+  hashPassword,
+} from "@/shared/auth.utile";
 import { db } from "@/shared/db";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -76,14 +80,21 @@ export const signin = async (req: Request, res: Response) => {
     return;
   }
 
-  const token = createJWT({ id: user.id, email: user.email });
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    secure: config.NODE_ENV === "production",
+  const { accessToken, refreshToken } = generateTokens({
+    id: user.id,
+    email: user.email,
   });
 
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    secure: process.env.NODE_ENV === "production",
+  });
   res.status(StatusCodes.OK).json({
     message: "로그인에 성공하였습니다.",
     data: null,
@@ -91,9 +102,15 @@ export const signin = async (req: Request, res: Response) => {
 };
 
 export const signout = async (_req: Request, res: Response) => {
-  res.cookie("token", "logout", {
+  res.cookie("accessToken", "", {
     httpOnly: true,
     expires: new Date(Date.now()),
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+    secure: process.env.NODE_ENV === "production",
   });
   res
     .status(StatusCodes.OK)

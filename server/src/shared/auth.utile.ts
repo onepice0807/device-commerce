@@ -22,14 +22,13 @@ export const comparePassword = async (
   return isMatch;
 };
 
-export const createJWT = ({ email, id }: CreateJwtType) => {
-  const token = jwt.sign({ email, id }, config.JWT_TOKEN!, {
+export const generateTokens = (payload: CreateJwtType) => {
+  const accessToken = jwt.sign(payload, config.ACCESS_TOKEN_SECRET!, {
     expiresIn: "1d",
   });
-  return token;
-};
+  const refreshToken = jwt.sign(payload, config.REFRESH_TOKEN_SECRET!, {
+    expiresIn: "7d",
+  });
 
-export const verifyJWT = (token: string) => {
-  const decoded = jwt.verify(token, config.JWT_TOKEN!) as CreateJwtType;
-  return decoded;
+  return { accessToken, refreshToken };
 };

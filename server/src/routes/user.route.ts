@@ -4,7 +4,7 @@ import { Router } from "express";
 const router: Router = Router();
 
 export const userRoutes = () => {
-  router.get("/verify-token", getCurrentUser);
+  router.get("/current-user", getCurrentUser);
 
   return router;
 };

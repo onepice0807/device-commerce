@@ -12,7 +12,6 @@ import hpp from "hpp";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
-import { config } from "@/config";
 import { CustomError, IErrorResponse } from "@/shared/custom-error-handler";
 import { appRoutes } from "@/routes";
 import cookieParser from "cookie-parser";
@@ -34,7 +33,7 @@ const securityMiddleware = (app: Application): void => {
   app.use(helmet());
   app.use(
     cors({
-      origin: config.CLIENT_URL,
+      origin: "http://localhost:5173",
       credentials: true,
       methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
     }),

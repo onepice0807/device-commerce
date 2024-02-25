@@ -9,15 +9,14 @@ export const verifyToken = (
   next: NextFunction,
 ) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const { accessToken } = req.cookies;
+
+    if (!accessToken || accessToken === "") {
       throw new NotAuthorizedError(
         "AccessToken이 유효하지 않습니다",
         "Middleware verifyToken() method error",
       );
     }
-
-    const accessToken = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(accessToken, config.ACCESS_TOKEN_SECRET!);
     //@ts-ignore

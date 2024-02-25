@@ -13,15 +13,18 @@ import {
   AuthPage,
 } from "@/pages";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { loader } from "./pages/Root";
 
 const App = () => {
   const queryClient = new QueryClient();
 
   const router = createBrowserRouter([
     {
+      id: "root",
       path: "/",
       element: <Root />,
       errorElement: <ErrorPage />,
+      loader: loader,
       children: [
         { index: true, element: <HomePage /> },
         { path: "category", element: <CategoryPage /> },
